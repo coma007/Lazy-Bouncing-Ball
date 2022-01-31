@@ -13,6 +13,7 @@ class Ball(object):
         self._color = color
         self._x = 200   # x coordinate of position
         self._y = 0     # y coordinate of position
+        self._v_h_max = 10
 
     @property
     def m(self):
@@ -93,6 +94,10 @@ class Ball(object):
     @property
     def coor(self):
         return self._x, self._y
+
+    @property
+    def v_h_max(self):
+        return self._v_h_max
 
     def do_gravity(self, terrain):
         for x, y in terrain:

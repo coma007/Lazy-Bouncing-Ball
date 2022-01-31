@@ -32,20 +32,25 @@ if __name__ == '__main__':
     pygame.draw.circle(surface, leo.color, leo.coor, leo.r)
     while run:
         pygame.draw.circle(surface, sky_color, leo.coor, leo.r)
-        clock.tick(leo.v[1]+60)
+        clock.tick(leo.v[0]+10)
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 run = False
 
         if pygame.key.get_pressed()[pygame.K_RIGHT]:
             speed_up_ball(leo)
-            pygame.draw.circle(surface, leo.color, leo.coor, leo.r)
-            print(leo.coor)
         if pygame.key.get_pressed()[pygame.K_LEFT]:
             slow_down_ball(leo)
         if pygame.key.get_pressed()[pygame.K_UP]:
             jump_ball(leo)
         else:
+            if leo.v_h > 0:
+                leo.a_h = 0
+                leo.x += leo.v_h * (1-0)
+                # SVAKO TIJELO PREPUSTENO SAMOM SEBI
+                # TEZI STANJU MIROVANJA
+                # ILI RAVNOMJERNOG PRAVOLINIJSKOG KRETANJA
+                inertion(leo) # ovo osposobiti a ono gore izbrisati
             pygame.draw.circle(surface, leo.color, leo.coor, leo.r)
         pygame.display.update()
     pygame.quit()
