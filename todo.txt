@@ -1,0 +1,16 @@
+* ravno tlo:
+    - ubrzavanje
+    - usporavanje
+    - skakanje
+
+* loop tla
+
+* truskavo tlo:
+    - osmisliti
+    -
+    -
+
+* meci
+    - bombe
+    - linearni
+    - sudari

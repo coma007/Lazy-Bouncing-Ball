@@ -1,7 +1,7 @@
 
 def create_terrain():
     terrain = {}
-    with open("terrain.txt", "r") as file:
+    with open("utils\\terrain\\terrain.txt", "r") as file:
         lines = file.readlines()
         i = 0
         j = 0

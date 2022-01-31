@@ -1,4 +1,5 @@
-import math
+import numpy as np
+import utils.params as p
 
 
 class Ball(object):
@@ -14,6 +15,7 @@ class Ball(object):
         self._x = 200   # x coordinate of position
         self._y = 0     # y coordinate of position
         self._v_h_max = 10
+        self._jumping = False
 
     @property
     def m(self):
@@ -43,8 +45,8 @@ class Ball(object):
     def v(self):
         if self._v_v == self._v_h == 0:
             return 0, 0
-        angle = math.atan(self._v_v/self._v_h)
-        intensity = math.sqrt(self._v_v**2 + self._v_h**2)
+        angle = np.arctan(self._v_v/self._v_h)
+        intensity = np.sqrt(self._v_v**2 + self._v_h**2)
         return intensity, angle
 
     @property
@@ -67,8 +69,8 @@ class Ball(object):
     def a(self):
         if self._a_v == self._a_h == 0:
             return 0, 0
-        angle = math.atan(self._a_v/self._a_h)
-        intensity = math.sqrt(self._a_v**2 + self._a_h**2)
+        angle = np.arctan(self._a_v/self._a_h)
+        intensity = np.sqrt(self._a_v**2 + self._a_h**2)
         return intensity, angle
 
     @property
@@ -98,6 +100,22 @@ class Ball(object):
     @property
     def v_h_max(self):
         return self._v_h_max
+
+    @property
+    def I(self):
+        return 2/5 * self._m * self._r ** 2
+
+    @property
+    def Q(self):
+        return p.g * self._m
+
+    @property
+    def jumping(self):
+        return self._jumping
+
+    @jumping.setter
+    def jumping(self, do_i_jump):
+        self._jumping = do_i_jump
 
     def do_gravity(self, terrain):
         for x, y in terrain:
