@@ -1,7 +1,11 @@
 import pygame
 from objects.Ball import *
+from objects.Bomb import Bomb
+from objects.Obstacle import Obstacle
+from utils.collision import check_for_collisions
 from utils.terrain.terrain import *
 from utils.physics import *
+from objects.LinearBullet import *
 
 
 if __name__ == '__main__':
@@ -17,6 +21,12 @@ if __name__ == '__main__':
     clock = pygame.time.Clock()
 
     leo = Ball()
+    bomb = Bomb(500)
+    obstacle1 = Obstacle(600)
+    obstacle2 = Obstacle(300, 4)
+    objects = [leo, bomb, obstacle1, obstacle2]
+    bullet = LinearBullet(700)
+    objects.append(bullet)
     run = True
     binary_terrain = create_terrain()
     terrain = []
@@ -37,6 +47,10 @@ if __name__ == '__main__':
         if not leo.jumping:
             leo.do_gravity(terrain)
         pygame.draw.circle(surface, sky_color, leo.coor, leo.r)
+        pygame.draw.circle(surface, bomb.color, bomb.coor, bomb.r)
+        pygame.draw.line(surface, bullet.color, bullet.get_min_coordinates(), bullet.get_max_coordinates())
+        pygame.draw.polygon(surface, obstacle1.color, obstacle1.get_all_vertices())
+        pygame.draw.polygon(surface, obstacle2.color, obstacle2.get_all_vertices())
 
         if pygame.key.get_pressed()[pygame.K_RIGHT]:
             speed_up_ball(leo)
@@ -54,5 +68,7 @@ if __name__ == '__main__':
                 leo.x += leo.v_h * (1-0)
             pygame.draw.circle(surface, leo.color, leo.coor, leo.r)
 
+            collisions = check_for_collisions(objects)
+            print(collisions)
         pygame.display.update()
     pygame.quit()

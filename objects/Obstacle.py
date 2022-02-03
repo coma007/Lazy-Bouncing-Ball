@@ -1,26 +1,30 @@
 import utils.params as p
 import numpy as np
+from objects.Vector import Vector, dot
 
-from objects.Vector import Vector
 
-
-class Bomb(object):
-    def __init__(self, x, diameter=10, mass=2, color=(0, 0, 0)):
+# hexagon
+class Obstacle(object):
+    # radi sa number_of_sides 4,5,6
+    def __init__(self, x, number_of_sides=6, diameter=20, mass=1, color=(212, 123, 74)):
         self._r = diameter
         self._m = mass
-        self._v_h = 0   # horizontal velocity
-        self._v_v = 0   # vertical velocity
-        self._a_h = 0   # horizontal acceleration
-        self._a_v = 0   # vertical acceleration
+        self._v_h = 0  # horizontal velocity
+        self._v_v = 0  # vertical velocity
+        self._a_h = 0  # horizontal acceleration
+        self._a_v = 0  # vertical acceleration
         self._color = color
-        self._x = x     # x coordinate of position
-        self._y = 390   # y coordinate of position
-        self._v_h_max = 10
-        self._jumping = False
+        self._x = x  # x coordinate of position
+        self._y = 400  # y coordinate of position
+        self._number_of_sides = number_of_sides
 
     @property
     def m(self):
         return self._m
+
+    @property
+    def number_of_sides(self):
+        return self._number_of_sides
 
     @property
     def r(self):
@@ -99,24 +103,12 @@ class Bomb(object):
         return self._x, self._y
 
     @property
-    def v_h_max(self):
-        return self._v_h_max
-
-    @property
     def I(self):
         return 2/5 * self._m * self._r ** 2
 
     @property
     def Q(self):
         return p.g * self._m
-
-    @property
-    def jumping(self):
-        return self._jumping
-
-    @jumping.setter
-    def jumping(self, do_i_jump):
-        self._jumping = do_i_jump
 
     def do_gravity(self, terrain):
         for x, y in terrain:
@@ -134,7 +126,16 @@ class Bomb(object):
         return [self._x - self._r, self._y - self._r]
 
     def furthest_point(self, vector):
-        return vector * self._r
+        vertices = self.get_all_vertices()
+        furthest_point = None
+        max_dist = np.NINF
+        for vertex in vertices:
+            point = Vector(vertex[0], vertex[1])
+            dist = dot(point, vector)
+            if dist > max_dist:
+                furthest_point = point
+                max_dist = dist
+        return furthest_point
 
     @property
     def center(self):
@@ -144,3 +145,12 @@ class Bomb(object):
     @y.setter
     def y(self, value):
         self._y = value
+
+    def get_all_vertices(self):
+        vertices = [(self._x, self._y-self._r)]
+        for i in range(5):
+            old_vertex = vertices[-1]
+            new_vertex = ((old_vertex[0] - self._x)*np.cos((2 * np.pi)/self._number_of_sides) - (self._y - old_vertex[1])*np.sin((2 * np.pi)/self._number_of_sides) + self._x,
+                          self._y - ((self._y - old_vertex[1])*np.cos((2 * np.pi)/self._number_of_sides) + (old_vertex[0] - self._x) * np.sin((2 * np.pi)/self._number_of_sides)))
+            vertices.append(new_vertex)
+        return vertices

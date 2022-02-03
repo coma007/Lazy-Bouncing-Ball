@@ -1,5 +1,6 @@
 import numpy as np
 import utils.params as p
+from objects.Vector import Vector
 
 
 class Ball(object):
@@ -122,3 +123,26 @@ class Ball(object):
             if x == self._x + self._r:
                 self._y = y - self._r
                 break
+
+    # funkcije potrebne za detekciju kolizija
+
+    # tacke sa najvecim i najmanjim koordinatama za sudare
+    def get_max_coordinates(self):
+        return [self._x + self._r, self._y + self._r]
+
+    def get_min_coordinates(self):
+        return [self._x - self._r, self._y - self._r]
+
+    def furthest_point(self, vector):
+        v = vector * self._r
+        support_v = Vector(self._x + v.x, self._y + v.y)
+        return support_v
+
+    @property
+    def center(self):
+        return Vector(self._x, self._y)
+
+    # samo funkcija za testiranje, posle je obrisati
+    @y.setter
+    def y(self, value):
+        self._y = value
