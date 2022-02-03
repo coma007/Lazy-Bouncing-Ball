@@ -1,3 +1,5 @@
+import pygame
+
 from objects.AxisAlignedBoundingBox import Interval, AxisAlignedBoundingBox
 import numpy as np
 
@@ -6,6 +8,8 @@ from objects.Obstacle import Obstacle
 from objects.Vector import Vector, dot, triple_product, magnitude
 from objects.LinearBullet import LinearBullet
 from objects.Ball import Ball
+
+from utils.physics import stop_ball
 
 ORIGIN = Vector(0, 0)
 
@@ -142,7 +146,7 @@ def gjk(object1, object2):
     simplex = [support_function(d, object1, object2)]
     support_v = ORIGIN - simplex[0]
     if support_v == ORIGIN:
-        return True
+        return True, 1
     v_normalized = support_v.to_np_array() / np.linalg.norm(support_v.to_np_array())
     d.set(v_normalized[0], v_normalized[1])
     while True:
@@ -227,12 +231,14 @@ def check_for_collisions(object_list):
                 if collide:
                     possible_collision.append(vector)
                     collisions.append(possible_collision)
-            elif isinstance(aabb1.shape, (Ball, Bomb)) and isinstance(aabb2.shape, (Ball, Bomb)):
+            elif isinstance(aabb1.shape, Bomb) and isinstance(aabb2.shape, Ball) or\
+                    isinstance(aabb1.shape, Ball) and isinstance(aabb2.shape, Bomb):
                 collide, vector = ball_to_ball_collision(aabb1.shape, aabb2.shape)
                 if collide:
                     possible_collision.append(vector)
                     collisions.append(possible_collision)
-            else:
+            elif isinstance(aabb1.shape, Ball) and isinstance(aabb2.shape, Obstacle) or\
+                    isinstance(aabb2.shape, Ball) and isinstance(aabb1.shape, Obstacle):
                 collide, vector = gjk(possible_collision[0].shape, possible_collision[1].shape)
                 if collide:
                     possible_collision.append(vector)
@@ -240,6 +246,23 @@ def check_for_collisions(object_list):
     return collisions
 
 
+def resolve_collisions(collision_list):
+    for collision in collision_list:
+        object1 = collision[0].shape
+        object2 = collision[1].shape
+        vector = collision[2]
+
+        if isinstance(object1, (LinearBullet, Bomb)):
+            return False
+        elif isinstance(object2, (LinearBullet, Bomb)):
+            return False
+        elif isinstance(object1, Ball) and isinstance(object2, Obstacle):
+            # nad leom (object1) treba napraviti odbijanje
+            pass
+        elif isinstance(object2, Ball) and isinstance(object1, Obstacle):
+            # nad leom (object2) treba napraviti odbijanje
+            pass
+    return True
 import random
 
 if __name__ == '__main__':

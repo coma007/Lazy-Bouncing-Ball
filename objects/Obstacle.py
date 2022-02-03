@@ -5,7 +5,6 @@ from objects.Vector import Vector, dot
 
 # hexagon
 class Obstacle(object):
-    # radi sa number_of_sides 4,5,6
     def __init__(self, x, number_of_sides=6, diameter=20, mass=1, color=(212, 123, 74)):
         self._r = diameter
         self._m = mass
@@ -148,7 +147,7 @@ class Obstacle(object):
 
     def get_all_vertices(self):
         vertices = [(self._x, self._y-self._r)]
-        for i in range(5):
+        for i in range(self._number_of_sides-1):
             old_vertex = vertices[-1]
             new_vertex = ((old_vertex[0] - self._x)*np.cos((2 * np.pi)/self._number_of_sides) - (self._y - old_vertex[1])*np.sin((2 * np.pi)/self._number_of_sides) + self._x,
                           self._y - ((self._y - old_vertex[1])*np.cos((2 * np.pi)/self._number_of_sides) + (old_vertex[0] - self._x) * np.sin((2 * np.pi)/self._number_of_sides)))

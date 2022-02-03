@@ -137,4 +137,5 @@ def inertion(ball):
         ball.a_h = dw(w[1])/(t1-t0)
 
 
-
+def stop_ball(ball):
+    ball.v_h = 0
