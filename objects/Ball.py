@@ -15,7 +15,7 @@ class Ball(object):
         self._color = color
         self._x = 200   # x coordinate of position
         self._y = 0     # y coordinate of position
-        self._v_h_max = 100
+        self._v_h_max = 10
         self._jumping = False
 
     @property

@@ -9,8 +9,6 @@ from objects.Vector import Vector, dot, triple_product, magnitude
 from objects.LinearBullet import LinearBullet
 from objects.Ball import Ball
 
-from utils.physics import stop_ball
-
 ORIGIN = Vector(0, 0)
 
 def sort_intervals(interval_list):
@@ -65,16 +63,31 @@ def sweep_and_prune(aabb_list):
 
 def ball_to_line_collision(line, ball):
     A = line.get_min_coordinates()
-    A = Vector(A[0], A[1])
+    D = line.get_max_coordinates()
     C = ball.center
-    Bx = np.sqrt(ball.r**2 - (A.y - C.y)**2) + C.x
-    B = Vector(Bx, A.y)
-    AB = B - A
-    ab_normalized = AB.to_np_array()/np.linalg.norm(AB.to_np_array())
-    ab_normalized_vector = Vector(ab_normalized[0], ab_normalized[1])
-    ab_magnitude = np.sqrt(dot(AB, AB))
-    return (A.x - C.x)**2 + (A.y - C.y)**2 <= ball.r**2, ab_normalized_vector * ab_magnitude
 
+    A = Vector(A[0], A[1])
+    D = Vector(D[0], D[1])
+    statement = (A.x - C.x)**2 + (A.y - C.y)**2 <= ball.r**2
+    if statement:
+        Bx = np.sqrt(ball.r**2 - (A.y - C.y)**2) + C.x
+        B = Vector(Bx, A.y)
+        AB = B - A
+        ab_normalized = AB.to_np_array()/np.linalg.norm(AB.to_np_array())
+        ab_normalized_vector = Vector(ab_normalized[0], ab_normalized[1])
+        ab_magnitude = np.sqrt(dot(AB, AB))
+        return statement, ab_normalized_vector * ab_magnitude
+
+    statement = (D.x - C.x) ** 2 + (D.y - C.y) ** 2 <= ball.r ** 2
+    if statement:
+        Bx = np.sqrt(ball.r ** 2 - (D.y - C.y) ** 2) + C.x
+        B = Vector(Bx, D.y)
+        DB = B - D
+        db_normalized = DB.to_np_array() / np.linalg.norm(DB.to_np_array())
+        db_normalized_vector = Vector(db_normalized[0], db_normalized[1])
+        db_magnitude = np.sqrt(dot(DB, DB))
+        return statement, db_normalized_vector * db_magnitude
+    return False, -1
 
 def ball_to_ball_collision(ball1, ball2):
     C1 = ball1.center
@@ -97,6 +110,8 @@ def support_function(vector, object1, object2):
 def line_case(simplex, vector):
     b, a = simplex[0], simplex[1]
     ab, ao = b - a, ORIGIN - a
+    if np.linalg.norm(ab.to_np_array()) == 0:
+        return True
     ab_normalized = ab.to_np_array()/np.linalg.norm(ab.to_np_array())
     ab_normalized_vector = Vector(ab_normalized[0], ab_normalized[1])
     ao_normalized = ao.to_np_array() / np.linalg.norm(ao.to_np_array())
@@ -104,6 +119,8 @@ def line_case(simplex, vector):
     if ab_normalized_vector == ao_normalized_vector:
         return True
     ab_norm = triple_product(ab, ao, ab)
+    if np.linalg.norm(ab_norm.to_np_array()) == 0:
+        return True
     ab_norm_normalized = ab_norm.to_np_array()/np.linalg.norm(ab_norm.to_np_array())
     vector.set(ab_norm_normalized[0], ab_norm_normalized[1])
     return False
@@ -114,10 +131,14 @@ def triangle_case(simplex, vector):
     ab, ac, ao = b - a, c - a, ORIGIN - a
 
     ab_norm = triple_product(ab, ac, ab)
+    if np.linalg.norm(ab_norm.to_np_array()) == 0:
+        return ab_norm
     ab_norm_normalized = ab_norm.to_np_array()/np.linalg.norm(ab_norm.to_np_array())
     ab_norm_normalized_vector = Vector(ab_norm_normalized[0], ab_norm_normalized[1])
 
     ac_norm = triple_product(ac, ab, ac)
+    if np.linalg.norm(ac_norm.to_np_array()) == 0:
+        return ac_norm
     ac_norm_normalized = ac_norm.to_np_array()/np.linalg.norm(ac_norm.to_np_array())
     ac_norm_normalized_vector = Vector(ac_norm_normalized[0], ac_norm_normalized[1])
 
@@ -138,13 +159,16 @@ def handle_simplex(simplex, vector):
     return triangle_case(simplex, vector)
 
 
-def gjk(object1, object2):
+def gjk(object1, object2, side):
     # moramo imati centar svih vrsta tela koje definisemo!!
     support_v = object2.center - object1.center
     d = support_v.to_np_array() / np.linalg.norm(support_v.to_np_array())
     d = Vector(d[0], d[1])
     simplex = [support_function(d, object1, object2)]
-    support_v = ORIGIN - simplex[0]
+    if side == 0:
+        support_v = ORIGIN - simplex[0]
+    elif side == 1:
+        support_v = simplex[0] - ORIGIN
     if support_v == ORIGIN:
         return True, 1
     v_normalized = support_v.to_np_array() / np.linalg.norm(support_v.to_np_array())
@@ -156,7 +180,9 @@ def gjk(object1, object2):
             return False, -1
         simplex.append(A)
         if handle_simplex(simplex, d):
-            dist = epa(simplex, object1, object2)
+            dist = None
+            if len(simplex) == 3:
+                dist = epa(simplex, object1, object2)
             return True, dist
 
 
@@ -184,6 +210,8 @@ def epa(simplex, object1, object2):
             ab, ao = b - a, ORIGIN - a
 
             ab_norm = triple_product(ab, a, ab)
+            if np.linalg.norm(ab_norm.to_np_array()) == 0:
+                return ab_norm
             ab_norm_normalized = ab_norm.to_np_array() / np.linalg.norm(ab_norm.to_np_array())
             ab_norm_normalized_vector = Vector(ab_norm_normalized[0], ab_norm_normalized[1])
 
@@ -237,25 +265,37 @@ def check_for_collisions(object_list):
                 if collide:
                     possible_collision.append(vector)
                     collisions.append(possible_collision)
+            elif isinstance(aabb1.shape, (Bomb, LinearBullet)) and isinstance(aabb2.shape, Obstacle) or\
+                    isinstance(aabb2.shape,  (Bomb, LinearBullet)) and isinstance(aabb1.shape, Obstacle):
+                collide, vector = gjk(possible_collision[0].shape, possible_collision[1].shape, 1)
+                if collide:
+                    possible_collision.append(vector)
+                    collisions.append(possible_collision)
             elif isinstance(aabb1.shape, Ball) and isinstance(aabb2.shape, Obstacle) or\
                     isinstance(aabb2.shape, Ball) and isinstance(aabb1.shape, Obstacle):
-                collide, vector = gjk(possible_collision[0].shape, possible_collision[1].shape)
+                collide, vector = gjk(possible_collision[0].shape, possible_collision[1].shape, 0)
                 if collide:
                     possible_collision.append(vector)
                     collisions.append(possible_collision)
     return collisions
 
 
-def resolve_collisions(collision_list):
+def resolve_collisions(collision_list, object_list):
     for collision in collision_list:
         object1 = collision[0].shape
         object2 = collision[1].shape
         vector = collision[2]
 
-        if isinstance(object1, (LinearBullet, Bomb)):
+        if isinstance(object1, (LinearBullet, Bomb)) and isinstance(object2, Ball):
+            # return True
             return False
-        elif isinstance(object2, (LinearBullet, Bomb)):
+        elif isinstance(object2, (LinearBullet, Bomb)) and isinstance(object1, Ball):
+            # return True
             return False
+        elif isinstance(object1, (Bomb, LinearBullet)) and isinstance(object2, Obstacle):
+            object_list.remove(object1)
+        elif isinstance(object2, (Bomb, LinearBullet)) and isinstance(object1, Obstacle):
+            object_list.remove(object2)
         elif isinstance(object1, Ball) and isinstance(object2, Obstacle):
             # nad leom (object1) treba napraviti odbijanje
             pass
@@ -263,6 +303,7 @@ def resolve_collisions(collision_list):
             # nad leom (object2) treba napraviti odbijanje
             pass
     return True
+
 import random
 
 if __name__ == '__main__':

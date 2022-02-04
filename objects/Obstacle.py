@@ -153,3 +153,9 @@ class Obstacle(object):
                           self._y - ((self._y - old_vertex[1])*np.cos((2 * np.pi)/self._number_of_sides) + (old_vertex[0] - self._x) * np.sin((2 * np.pi)/self._number_of_sides)))
             vertices.append(new_vertex)
         return vertices
+
+    def get_position(self, ball):
+        self._x -= ball.v_h
+
+    def get_position_jump(self, ball):
+        self._x -= ball.v_h / 500

@@ -8,13 +8,13 @@ class Bomb(object):
     def __init__(self, x, diameter=10, mass=2, color=(0, 0, 0)):
         self._r = diameter
         self._m = mass
-        self._v_h = 0   # horizontal velocity
+        self._v_h = 10   # horizontal velocity
         self._v_v = 0   # vertical velocity
         self._a_h = 0   # horizontal acceleration
         self._a_v = 0   # vertical acceleration
         self._color = color
         self._x = x     # x coordinate of position
-        self._y = 390   # y coordinate of position
+        self._y = 395   # y coordinate of position
         self._v_h_max = 10
         self._jumping = False
 
@@ -144,3 +144,9 @@ class Bomb(object):
     @y.setter
     def y(self, value):
         self._y = value
+
+    def get_position(self, ball):
+        self._x -= self.v_h + ball.v_h / 2
+
+    def get_position_jump(self, ball):
+        self._x -= ball.v_h / 500

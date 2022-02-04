@@ -1,17 +1,18 @@
 import utils.params as p
 import numpy as np
+from objects.Vector import Vector, dot
 
 
 class LinearBullet(object):
     def __init__(self, x, length=10, mass=1, color=(0, 0, 0)):
         self._m = mass
-        self._v_h = 0  # horizontal velocity
+        self._v_h = 10  # horizontal velocity
         self._v_v = 0  # vertical velocity
         self._a_h = 0  # horizontal acceleration
         self._a_v = 0  # vertical acceleration
         self._color = color
         self._x = x  # x coordinate of middle point
-        self._y = 390  # y coordinate of all positions
+        self._y = 385  # y coordinate of all positions
         self._length = length
         self._v_h_max = 10
 
@@ -103,6 +104,10 @@ class LinearBullet(object):
     def Q(self):
         return p.g * self._m
 
+    @property
+    def center(self):
+        return Vector(self._x, self._y)
+
     # skroz leva tacka
     def get_min_coordinates(self):
         return self._x - self._length, self._y
@@ -110,3 +115,21 @@ class LinearBullet(object):
     # skroz desna tacka
     def get_max_coordinates(self):
         return self._x + self._length, self._y
+
+    def get_position(self, ball):
+        self._x -= self.v_h + ball.v_h / 2
+
+    def get_position_jump(self, ball):
+        self._x -= ball.v_h / 500
+
+    def furthest_point(self, vector):
+        vertices = [self.get_min_coordinates(), self.get_max_coordinates()]
+        furthest_point = None
+        max_dist = np.NINF
+        for vertex in vertices:
+            point = Vector(vertex[0], vertex[1])
+            dist = dot(point, vector)
+            if dist > max_dist:
+                furthest_point = point
+                max_dist = dist
+        return furthest_point

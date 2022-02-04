@@ -39,9 +39,10 @@ def speed_up_ball(ball):
     if v_h[1] < ball.v_h_max:
         ball.v_h = v_h[1]
         ball.a_h = f_h(v_h_0[0])/ball.m
-        ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 1000
+        # ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 1000
     else:
-        ball.x += ball.v_h * (t1-t0)
+        pass
+        # ball.x += ball.v_h * (t1-t0)
 
 
 def slow_down_ball(ball):
@@ -87,12 +88,13 @@ def slow_down_ball(ball):
     elif v_h[1] < ball.v_h_max:
         ball.v_h = v_h[1]
         ball.a_h = f_h(v_h_0[0]) / ball.m
-        ball.x += (v_h_0[0] + ball.a_h * 1 / 2 * (t1 - t0) ** 2) / 1000
+        # ball.x += (v_h_0[0] + ball.a_h * 1 / 2 * (t1 - t0) ** 2) / 1000
     else:
-        ball.x += ball.v_h * (t1 - t0)
+        pass
+        # ball.x += ball.v_h * (t1 - t0)
 
 
-def jump(ball):
+def jump(ball, terrain):
     velocity, angle = ball.v
 
     # otpor vazduha
@@ -125,14 +127,14 @@ def jump(ball):
         ball.v_v = v_v[1]
         ball.a_h = f_h(v_h_0[0])/ball.m
         ball.a_v = f_h(v_v_0[0])/ball.m
-        ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 500
+        # ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 500
         ball.y -= (v_v_0[0] + ball.a_v * 1/2 * (t1-t0)**2) / 500\
         # print(ball.y)
     if v_v[1] < 0:
-        fall_down(ball)
+        fall_down(ball, terrain)
 
 
-def fall_down(ball):
+def fall_down(ball, terrain):
     velocity, angle = ball.v
     angle *= -1
 
@@ -165,8 +167,15 @@ def fall_down(ball):
     ball.v_v = v_v[1]
     ball.a_h = f_h(v_h_0[0])/ball.m
     ball.a_v = f_h(v_v_0[0])/ball.m
-    ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 500
-    ball.y -= (v_v_0[0] + ball.a_v * 1/2 * (t1-t0)**2) / 500\
+    # ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 500
+    ball.y -= (v_v_0[0] + ball.a_v * 1/2 * (t1-t0)**2) / 500
+    if ball.y > terrain[0][1] - ball.r:
+        ball.y = terrain[0][1] - ball.r
+        ball.v_v = 0
+        ball.a_v = 0
+        ball.v_h = 0
+        ball.a_h = 0
+        ball.jumping = False
 
 
 def inertion(ball):
