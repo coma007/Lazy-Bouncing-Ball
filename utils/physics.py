@@ -5,8 +5,6 @@ from utils import params as p
 
 def speed_up_ball(ball):
 
-    if ball.v_h == 0:
-        ball.v_h = 1
     velocity, angle = ball.v
 
     # data sila
@@ -94,11 +92,85 @@ def slow_down_ball(ball):
         ball.x += ball.v_h * (t1 - t0)
 
 
-def jump_ball(ball):
-    pass
+def jump(ball):
+    velocity, angle = ball.v
+
+    # otpor vazduha
+    f_air = lambda v: ball.m * p.r_air * v
+    f_air_h = lambda v: f_air(v) * np.cos(angle)
+    f_air_v = lambda v: f_air(v) * np.sin(angle)
+
+    # vertikalne sile
+    f_v = lambda v: - f_air_v(v) - ball.Q
+
+    # horizontalne sile
+    f_h = lambda v: - f_air_h(v)
+
+    # ovo je zakucano
+    t0 = 0
+    t1 = 1
+    h = 1
+
+    dv_h = lambda *args: f_h(args[0]) / ball.m
+    v_h_0 = np.array([ball.v_h])
+
+    dv_v = lambda *args: f_v(args[0]) / ball.m
+    v_v_0 = np.array([ball.v_v])
+
+    v_h = nans_lib.rk4N(t0, t1, h, v_h_0, dv_h)[0]
+    v_v = nans_lib.rk4N(t0, t1, h, v_v_0, dv_v)[0]
+
+    if v_v[1] >= 0:
+        ball.v_h = v_h[1]
+        ball.v_v = v_v[1]
+        ball.a_h = f_h(v_h_0[0])/ball.m
+        ball.a_v = f_h(v_v_0[0])/ball.m
+        ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 500
+        ball.y -= (v_v_0[0] + ball.a_v * 1/2 * (t1-t0)**2) / 500\
+        # print(ball.y)
+    if v_v[1] < 0:
+        fall_down(ball)
+
+
+def fall_down(ball):
+    velocity, angle = ball.v
+    angle *= -1
+
+    # otpor vazduha
+    f_air = lambda v: ball.m * p.r_air * v
+    f_air_h = lambda v: f_air(v) * np.cos(angle)
+    f_air_v = lambda v: f_air(v) * np.sin(angle)
+
+    # vertikalne sile
+    f_v = lambda v: - f_air_v(v) - ball.Q
+
+    # horizontalne sile
+    f_h = lambda v: - f_air_h(v)
+
+    # ovo je zakucano
+    t0 = 0
+    t1 = 1
+    h = 1
+
+    dv_h = lambda *args: f_h(args[0]) / ball.m
+    v_h_0 = np.array([ball.v_h])
+
+    dv_v = lambda *args: f_v(args[0]) / ball.m
+    v_v_0 = np.array([ball.v_v])
+
+    v_h = nans_lib.rk4N(t0, t1, h, v_h_0, dv_h)[0]
+    v_v = nans_lib.rk4N(t0, t1, h, v_v_0, dv_v)[0]
+
+    ball.v_h = v_h[1]
+    ball.v_v = v_v[1]
+    ball.a_h = f_h(v_h_0[0])/ball.m
+    ball.a_v = f_h(v_v_0[0])/ball.m
+    ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 500
+    ball.y -= (v_v_0[0] + ball.a_v * 1/2 * (t1-t0)**2) / 500\
 
 
 def inertion(ball):
+
     if ball.v_h == 0:
         return
     else:
@@ -135,6 +207,5 @@ def inertion(ball):
         w = nans_lib.rk4N(t0, t1, h, omega_0, dw)[0]
         ball.v_h = w[1]*ball.r
         ball.a_h = dw(w[1])/(t1-t0)
-
 
 

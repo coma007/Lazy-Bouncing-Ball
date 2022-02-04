@@ -46,29 +46,32 @@ if __name__ == '__main__':
 
         if not leo.jumping:
             leo.do_gravity(terrain)
+        else:
+            jump(leo)
         pygame.draw.circle(surface, sky_color, leo.coor, leo.r)
         pygame.draw.circle(surface, bomb.color, bomb.coor, bomb.r)
         pygame.draw.line(surface, bullet.color, bullet.get_min_coordinates(), bullet.get_max_coordinates())
         pygame.draw.polygon(surface, obstacle1.color, obstacle1.get_all_vertices())
         pygame.draw.polygon(surface, obstacle2.color, obstacle2.get_all_vertices())
 
-        if pygame.key.get_pressed()[pygame.K_RIGHT]:
+        if pygame.key.get_pressed()[pygame.K_RIGHT] and not leo.jumping:
             speed_up_ball(leo)
-        if pygame.key.get_pressed()[pygame.K_LEFT]:
+        elif pygame.key.get_pressed()[pygame.K_LEFT] and not leo.jumping:
             slow_down_ball(leo)
-        if pygame.key.get_pressed()[pygame.K_UP]:
+        elif pygame.key.get_pressed()[pygame.K_UP] and not leo.jumping:
             leo.jumping = True
-            jump_ball(leo)
-        else:
+        if leo.jumping:
+            jump(leo)
+        elif not leo.jumping:
             if leo.v_h > 0:
                 # SVAKO TIJELO PREPUSTENO SAMOM SEBI
                 # TEZI STANJU MIROVANJA
                 # ILI RAVNOMJERNOG PRAVOLINIJSKOG KRETANJA
                 inertion(leo)
                 leo.x += leo.v_h * (1-0)
-            pygame.draw.circle(surface, leo.color, leo.coor, leo.r)
+        pygame.draw.circle(surface, leo.color, leo.coor, leo.r)
 
-            collisions = check_for_collisions(objects)
-            print(collisions)
+        collisions = check_for_collisions(objects)
+            # print(collisions)
         pygame.display.update()
     pygame.quit()

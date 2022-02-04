@@ -262,7 +262,7 @@ if __name__ == '__main__':
     b.x = 566.8228680324999
     b.y = 390
     aabb_list.append(AxisAlignedBoundingBox(b))
-    print(gjk(b, o))
+    # print(gjk(b, o))
     # print(ball_to_ball_collision(b, b1))
     # simplex = [Vector(-1,-2), Vector(5,-2), Vector(1,4)]
     # epa(simplex, b, b1)

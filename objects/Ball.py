@@ -5,7 +5,7 @@ from objects.Vector import Vector
 
 class Ball(object):
 
-    def __init__(self, diameter=20, mass=2, color=(27, 3, 163)):
+    def __init__(self, diameter=20, mass=1, color=(27, 3, 163)):
         self._r = diameter
         self._m = mass
         self._v_h = 0   # horizontal velocity
@@ -15,7 +15,7 @@ class Ball(object):
         self._color = color
         self._x = 200   # x coordinate of position
         self._y = 0     # y coordinate of position
-        self._v_h_max = 10
+        self._v_h_max = 100
         self._jumping = False
 
     @property
@@ -94,6 +94,10 @@ class Ball(object):
     def x(self, new_x):
         self._x = new_x
 
+    @y.setter
+    def y(self, new_y):
+        self._y = new_y
+
     @property
     def coor(self):
         return self._x, self._y
@@ -117,6 +121,9 @@ class Ball(object):
     @jumping.setter
     def jumping(self, do_i_jump):
         self._jumping = do_i_jump
+        if do_i_jump:
+            self._v_h += p.v_up * np.cos(p.angle_up)
+            self._v_v += p.v_up * np.sin(p.angle_up)
 
     def do_gravity(self, terrain):
         for x, y in terrain:
