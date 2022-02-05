@@ -14,7 +14,7 @@ class Bomb(object):
         self._a_v = 0   # vertical acceleration
         self._color = color
         self._x = x     # x coordinate of position
-        self._y = 395   # y coordinate of position
+        self._y = 370  # y coordinate of position
         self._v_h_max = 10
         self._jumping = False
 
