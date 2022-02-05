@@ -135,6 +135,8 @@ if __name__ == '__main__':
             jump(leo, terrain)
             if pygame.key.get_pressed()[pygame.K_RIGHT]:
                 speed_up_ball(leo)
+            if pygame.key.get_pressed()[pygame.K_LEFT]:
+                slow_down_ball(leo)
             for o in objects:
                 if isinstance(o, LinearBullet):
                     pygame.draw.line(surface, sky_color, o.get_min_coordinates(), o.get_max_coordinates())
