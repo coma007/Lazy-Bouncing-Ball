@@ -5,7 +5,7 @@ from objects.Vector import Vector, dot
 
 # hexagon
 class Obstacle(object):
-    def __init__(self, x, number_of_sides=6, diameter=20, mass=1, color=(212, 123, 74)):
+    def __init__(self, x, number_of_sides=6, diameter=30, mass=1, color=(212, 123, 74)):
         self._r = diameter
         self._m = mass
         self._v_h = 0  # horizontal velocity
@@ -158,4 +158,4 @@ class Obstacle(object):
         self._x -= ball.v_h
 
     def get_position_jump(self, ball):
-        self._x -= ball.v_h / 500
+        self._x -= ball.v_h / 10

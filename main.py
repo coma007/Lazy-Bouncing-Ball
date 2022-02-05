@@ -36,10 +36,10 @@ if __name__ == '__main__':
             pygame.draw.rect(surface, ground_color, pygame.Rect(x, y+400, 10000/WIDTH, 10000/LENGTH), 2)
             terrain.append((x, y+400))
 
-    # objects.append(Bomb(700))
+    objects.append(Bomb(700))
     #
     # j = random.randint(3, 11)
-    # objects.append(Obstacle(300, j))
+    objects.append(Obstacle(1000, 6))
     #
     # objects.append(LinearBullet(1000))
     while run:
@@ -68,6 +68,7 @@ if __name__ == '__main__':
 
         if not leo.jumping:
             leo.do_gravity(terrain)
+
         for o in objects:
             if isinstance(o, (Ball, Bomb)):
                 pygame.draw.circle(surface, sky_color, o.coor, o.r)
@@ -76,14 +77,16 @@ if __name__ == '__main__':
             elif isinstance(o, Obstacle):
                 pygame.draw.polygon(surface, sky_color, o.get_all_vertices())
                 a = o.get_min_coordinates()
-                for x in range(int(o.get_min_coordinates()[0]), int(o.get_max_coordinates()[0])+1):
-                    WIDTH, LENGTH = pygame.display.get_surface().get_size()
-                    y = terrain[0][1]
-                    pygame.draw.rect(surface, ground_color,
-                                     pygame.Rect(x, y, 10000 / WIDTH, 10000 / LENGTH), 2)
+                for x in range(int(o.get_min_coordinates()[0]), int(o.get_max_coordinates()[0]) + 1):
+                    y_0 = terrain[0][1]
+                    for y in range(y_0, int(o.get_max_coordinates()[1]) + 1):
+                        WIDTH, LENGTH = pygame.display.get_surface().get_size()
+                        # y = terrain[0][1]
+                        pygame.draw.rect(surface, ground_color,
+                                         pygame.Rect(x, y, 10000 / WIDTH, 10000 / LENGTH), 2)
 
         if pygame.key.get_pressed()[pygame.K_RIGHT] and not leo.jumping:
-            speed_up_ball_ground(leo)
+            speed_up_ball_ground(leo, objects)
             if pygame.key.get_pressed()[pygame.K_UP]:
                 leo.jumping = True
             for o in objects:
@@ -95,20 +98,22 @@ if __name__ == '__main__':
                     o.get_position(leo)
                 elif isinstance(o, Obstacle):
                     pygame.draw.polygon(surface, sky_color, o.get_all_vertices())
-                    for x in range(int(o.get_min_coordinates()[0]), int(o.get_max_coordinates()[0])+1):
-                        WIDTH, LENGTH = pygame.display.get_surface().get_size()
-                        y = terrain[0][1]
-                        pygame.draw.rect(surface, ground_color,
-                                         pygame.Rect(x, y, 10000 / WIDTH, 10000 / LENGTH), 2)
+                    for x in range(int(o.get_min_coordinates()[0]), int(o.get_max_coordinates()[0]) + 1):
+                        y_0 = terrain[0][1]
+                        for y in range(y_0, int(o.get_max_coordinates()[1]) + 1):
+                            WIDTH, LENGTH = pygame.display.get_surface().get_size()
+                            # y = terrain[0][1]
+                            pygame.draw.rect(surface, ground_color,
+                                             pygame.Rect(x, y, 10000 / WIDTH, 10000 / LENGTH), 2)
                     o.get_position(leo)
                 if o.x < 0:
                     objects.remove(o)
-            collisions = check_for_collisions(objects)
-
-            # print(collisions)
-            run = resolve_collisions(collisions, objects)
+            # collisions = check_for_collisions(objects)
+            #
+            # # print(collisions)
+            # run = resolve_collisions(collisions, objects)
         elif pygame.key.get_pressed()[pygame.K_LEFT] and not leo.jumping:
-            slow_down_ball_ground(leo)
+            slow_down_ball_ground(leo, objects)
             if pygame.key.get_pressed()[pygame.K_UP]:
                 leo.jumping = True
             for o in objects:
@@ -120,38 +125,39 @@ if __name__ == '__main__':
                     o.get_position(leo)
                 elif isinstance(o, Obstacle):
                     pygame.draw.polygon(surface, sky_color, o.get_all_vertices())
-                    for x in range(int(o.get_min_coordinates()[0]), int(o.get_max_coordinates()[0])+1):
-                        WIDTH, LENGTH = pygame.display.get_surface().get_size()
-                        y = terrain[0][1]
-                        pygame.draw.rect(surface, ground_color,
-                                         pygame.Rect(x, y, 10000 / WIDTH, 10000 / LENGTH), 2)
+                    for x in range(int(o.get_min_coordinates()[0]), int(o.get_max_coordinates()[0]) + 1):
+                        y_0 = terrain[0][1]
+                        for y in range(y_0, int(o.get_max_coordinates()[1]) + 1):
+                            WIDTH, LENGTH = pygame.display.get_surface().get_size()
+                            # y = terrain[0][1]
+                            pygame.draw.rect(surface, ground_color,
+                                             pygame.Rect(x, y, 10000 / WIDTH, 10000 / LENGTH), 2)
                     o.get_position(leo)
                 if o.x < 0:
                     objects.remove(o)
-            collisions = check_for_collisions(objects)
+            # collisions = check_for_collisions(objects)
         elif pygame.key.get_pressed()[pygame.K_UP] and not leo.jumping:
             leo.jumping = True
         if leo.jumping:
-            jump(leo, terrain)
+            jump(leo, terrain, objects)
             if pygame.key.get_pressed()[pygame.K_RIGHT]:
-                speed_up_ball(leo)
+                speed_up_ball(leo, objects)
             if pygame.key.get_pressed()[pygame.K_LEFT]:
-                slow_down_ball(leo)
+                slow_down_ball(leo, objects)
             for o in objects:
                 if isinstance(o, LinearBullet):
                     pygame.draw.line(surface, sky_color, o.get_min_coordinates(), o.get_max_coordinates())
-                    o.get_position_jump(leo)
                 elif isinstance(o, Bomb):
                     pygame.draw.circle(surface, sky_color, o.coor, o.r)
-                    o.get_position_jump(leo)
                 elif isinstance(o, Obstacle):
                     pygame.draw.polygon(surface, sky_color, o.get_all_vertices())
-                    for x in range(int(o.get_min_coordinates()[0]), int(o.get_max_coordinates()[0])+1):
-                        y = terrain[0][1]
-                        WIDTH, LENGTH = pygame.display.get_surface().get_size()
-                        pygame.draw.rect(surface, ground_color,
-                                         pygame.Rect(x, y, 10000 / WIDTH, 10000 / LENGTH), 2)
-                    o.get_position_jump(leo)
+                    for x in range(int(o.get_min_coordinates()[0]), int(o.get_max_coordinates()[0]) + 1):
+                        y_0 = terrain[0][1]
+                        for y in range(y_0, int(o.get_max_coordinates()[1]) + 1):
+                            WIDTH, LENGTH = pygame.display.get_surface().get_size()
+                            # y = terrain[0][1]
+                            pygame.draw.rect(surface, ground_color,
+                                             pygame.Rect(x, y, 10000 / WIDTH, 10000 / LENGTH), 2)
                 if o.x < 0:
                     objects.remove(o)
 
@@ -162,10 +168,10 @@ if __name__ == '__main__':
                     pygame.draw.line(surface, o.color, o.get_min_coordinates(), o.get_max_coordinates())
                 elif isinstance(o, Obstacle):
                     pygame.draw.polygon(surface, o.color, o.get_all_vertices())
-            collisions = check_for_collisions(objects)
-
-            # print(collisions)
-            run = resolve_collisions(collisions, objects)
+            # collisions = check_for_collisions(objects)
+            #
+            # # print(collisions)
+            # run = resolve_collisions(collisions, objects)
         elif not leo.jumping:
             if leo.v_h > 0:
                 # SVAKO TIJELO PREPUSTENO SAMOM SEBI
@@ -183,17 +189,21 @@ if __name__ == '__main__':
                     o.get_position(leo)
                 elif isinstance(o, Obstacle):
                     pygame.draw.polygon(surface, sky_color, o.get_all_vertices())
-                    for x in range(int(o.get_min_coordinates()[0]), int(o.get_max_coordinates()[0])+1):
-                        WIDTH, LENGTH = pygame.display.get_surface().get_size()
-                        pygame.draw.rect(surface, ground_color,
-                                         pygame.Rect(x, 410, 10000 / WIDTH, 10000 / LENGTH), 2)
+                    for x in range(int(o.get_min_coordinates()[0]), int(o.get_max_coordinates()[0]) + 1):
+                        y_0 = terrain[0][1]
+                        for y in range(y_0, int(o.get_max_coordinates()[1]) + 1):
+                            WIDTH, LENGTH = pygame.display.get_surface().get_size()
+                            # y = terrain[0][1]
+                            pygame.draw.rect(surface, ground_color,
+                                             pygame.Rect(x, y, 10000 / WIDTH, 10000 / LENGTH), 2)
                     o.get_position(leo)
                 if o.x < 0:
                     objects.remove(o)
-            collisions = check_for_collisions(objects)
 
-            # print(collisions)
-            run = resolve_collisions(collisions, objects)
+        collisions = check_for_collisions(objects)
+
+        # print(collisions)
+        run = resolve_collisions(collisions, objects)
 
         pygame.draw.circle(surface, leo.color, leo.coor, leo.r)
 

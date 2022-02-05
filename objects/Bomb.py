@@ -14,7 +14,7 @@ class Bomb(object):
         self._a_v = 0   # vertical acceleration
         self._color = color
         self._x = x     # x coordinate of position
-        self._y = 370  # y coordinate of position
+        self._y = 355  # y coordinate of position
         self._v_h_max = 10
         self._jumping = False
 
@@ -149,4 +149,4 @@ class Bomb(object):
         self._x -= self.v_h + ball.v_h / 2
 
     def get_position_jump(self, ball):
-        self._x -= ball.v_h / 500
+        self._x -= self._v_h / 10 + ball.v_h / 500

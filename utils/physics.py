@@ -1,9 +1,10 @@
 import numpy as np
 from utils import nans_lib
 from utils import params as p
+from objects.Ball import Ball
 
 
-def speed_up_ball_ground(ball):
+def speed_up_ball_ground(ball, objects):
 
     velocity, angle = ball.v
 
@@ -40,9 +41,12 @@ def speed_up_ball_ground(ball):
         ball.v_h = v_h[1]
         ball.a_h = f_h(v_h_0[0])/ball.m
         # ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 1000
+        for o in objects:
+            if not isinstance(o, Ball):
+                o.get_position(ball)
 
 
-def speed_up_ball(ball):
+def speed_up_ball(ball, objects):
 
     velocity, angle = ball.v
 
@@ -75,12 +79,18 @@ def speed_up_ball(ball):
         ball.v_h = v_h[1]
         ball.a_h = f_h(v_h_0[0])/ball.m
         # ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 1000
+        for o in objects:
+            if not isinstance(o, Ball):
+                o.get_position_jump(ball)
     else:
         pass
         # ball.x += ball.v_h * (t1-t0)
+        for o in objects:
+            if not isinstance(o, Ball):
+                o.get_position_jump(ball)
 
 
-def slow_down_ball_ground(ball):
+def slow_down_ball_ground(ball, objects):
     if ball.v_h == 0:
         return
     velocity, angle = ball.v
@@ -124,9 +134,12 @@ def slow_down_ball_ground(ball):
         ball.v_h = v_h[1]
         ball.a_h = f_h(v_h_0[0]) / ball.m
         # ball.x += (v_h_0[0] + ball.a_h * 1 / 2 * (t1 - t0) ** 2) / 1000
+        for o in objects:
+            if not isinstance(o, Ball):
+                o.get_position(ball)
 
 
-def slow_down_ball(ball):
+def slow_down_ball(ball, objects):
     if ball.v_h == 0:
         return
     velocity, angle = ball.v
@@ -166,9 +179,12 @@ def slow_down_ball(ball):
         ball.v_h = v_h[1]
         ball.a_h = f_h(v_h_0[0]) / ball.m
         # ball.x += (v_h_0[0] + ball.a_h * 1 / 2 * (t1 - t0) ** 2) / 1000
+        for o in objects:
+            if not isinstance(o, Ball):
+                o.get_position_jump(ball)
 
 
-def jump(ball, terrain):
+def jump(ball, terrain, objects):
     velocity, angle = ball.v
 
     # otpor vazduha
@@ -201,14 +217,17 @@ def jump(ball, terrain):
         ball.v_v = v_v[1]
         ball.a_h = f_h(v_h_0[0])/ball.m
         ball.a_v = f_h(v_v_0[0])/ball.m
-        ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 20
-        ball.y -= (v_v_0[0] + ball.a_v * 1/2 * (t1-t0)**2) / 500
-    print(v_h[0])
+        # ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 500
+        ball.y -= (v_v_0[0] + ball.a_v * 1/2 * (t1-t0)**2) / 500\
+        # print(ball.y)
+        for o in objects:
+            if not isinstance(o, Ball):
+                o.get_position_jump(ball)
     if v_v[1] < 0:
-        fall_down(ball, terrain)
+        fall_down(ball, terrain, objects)
 
 
-def fall_down(ball, terrain):
+def fall_down(ball, terrain, objects):
     velocity, angle = ball.v
     angle *= -1
 
@@ -241,8 +260,13 @@ def fall_down(ball, terrain):
     ball.v_v = v_v[1]
     ball.a_h = f_h(v_h_0[0])/ball.m
     ball.a_v = f_h(v_v_0[0])/ball.m
-    ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 20
+    # ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 500
     ball.y -= (v_v_0[0] + ball.a_v * 1/2 * (t1-t0)**2) / 500
+
+    for o in objects:
+        if not isinstance(o, Ball):
+            o.get_position_jump(ball)
+
     if ball.y > terrain[0][1] - ball.r:
         ball.y = terrain[0][1] - ball.r
         ball.v_v = 0
@@ -250,6 +274,8 @@ def fall_down(ball, terrain):
         ball.v_h = 0
         ball.a_h = 0
         ball.jumping = False
+
+
 
 
 def inertion(ball):

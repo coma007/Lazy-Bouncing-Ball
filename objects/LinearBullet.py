@@ -120,7 +120,7 @@ class LinearBullet(object):
         self._x -= self.v_h + ball.v_h / 2
 
     def get_position_jump(self, ball):
-        self._x -= ball.v_h / 500
+        self._x -= self._v_h / 10 + ball.v_h / 500
 
     def furthest_point(self, vector):
         vertices = [self.get_min_coordinates(), self.get_max_coordinates()]
