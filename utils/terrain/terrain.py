@@ -1,3 +1,5 @@
+import pygame
+
 
 def create_terrain():
     terrain = {}

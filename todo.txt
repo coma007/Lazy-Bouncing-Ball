@@ -1,16 +1,3 @@
-* ravno tlo:
-    - ubrzavanje
-    - usporavanje
-    - skakanje
+*  povecati brzinu metaka malko
+*  provalija (neki plavi pravougaonik visine podloge)
 
-* loop tla
-
-* truskavo tlo:
-    - osmisliti
-    -
-    -
-
-* meci
-    - bombe
-    - linearni
-    - sudari

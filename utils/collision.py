@@ -2,6 +2,7 @@ import pygame
 
 from objects.AxisAlignedBoundingBox import Interval, AxisAlignedBoundingBox
 import numpy as np
+from utils.physics import *
 
 from objects.Bomb import Bomb
 from objects.Obstacle import Obstacle
@@ -88,6 +89,7 @@ def ball_to_line_collision(line, ball):
         db_magnitude = np.sqrt(dot(DB, DB))
         return statement, db_normalized_vector * db_magnitude
     return False, -1
+
 
 def ball_to_ball_collision(ball1, ball2):
     C1 = ball1.center
@@ -286,12 +288,20 @@ def resolve_collisions(collision_list, object_list):
         object2 = collision[1].shape
         vector = collision[2]
 
-        if isinstance(object1, (LinearBullet, Bomb)) and isinstance(object2, Ball):
+        if isinstance(object1, Bomb) and isinstance(object2, Ball):
             # return True
             return False
-        elif isinstance(object2, (LinearBullet, Bomb)) and isinstance(object1, Ball):
+        if isinstance(object1, LinearBullet) and isinstance(object2, Ball):
+            # return True
+            collision_reaction_bullet(object2, object1)
+            object_list.remove(object1)
+        elif isinstance(object2, Bomb) and isinstance(object1, Ball):
             # return True
             return False
+        elif isinstance(object2, LinearBullet) and isinstance(object1, Ball):
+            # return True
+            collision_reaction_bullet(object1, object2)
+            object_list.remove(object2)
         elif isinstance(object1, (Bomb, LinearBullet)) and isinstance(object2, Obstacle):
             object_list.remove(object1)
         elif isinstance(object2, (Bomb, LinearBullet)) and isinstance(object1, Obstacle):
@@ -308,6 +318,10 @@ def resolve_collisions(collision_list, object_list):
             # object2.stop()
             # object2.moving = False
             pass
+            collision_reaction_polygon(object1, 0, 0)
+        elif isinstance(object2, Ball) and isinstance(object1, Obstacle):
+            # nad leom (object2) treba napraviti odbijanje
+            collision_reaction_polygon(object2)
     return True
 
 import random

@@ -84,6 +84,7 @@ def triple_product(vector1, vector2, vector3):
 def magnitude(vector):
     return np.sqrt(vector.x**2 + vector.y**2)
 
+
 if __name__ == '__main__':
     vector1 = Vector(1, 2)
     vector2 = Vector(2, 7)

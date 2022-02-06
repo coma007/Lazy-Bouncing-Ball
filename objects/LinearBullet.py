@@ -42,8 +42,10 @@ class LinearBullet(object):
 
     @property
     def v(self):
-        if self._v_v == self._v_h == 0:
+        if self._v_h == self._v_v == 0:
             return 0, 0
+        if self._v_h == 0 and self._v_v != 0:
+            return self._v_v, np.pi/2
         angle = np.arctan(self._v_v / self._v_h)
         intensity = np.sqrt(self._v_v ** 2 + self._v_h ** 2)
         return intensity, angle
@@ -66,8 +68,10 @@ class LinearBullet(object):
 
     @property
     def a(self):
-        if self._a_v == self._a_h == 0:
+        if self._a_h == self._a_v == 0:
             return 0, 0
+        if self._a_h == 0 and self._a_v != 0:
+            return self._a_v, np.pi/2
         angle = np.arctan(self._a_v / self._a_h)
         intensity = np.sqrt(self._a_v ** 2 + self._a_h ** 2)
         return intensity, angle
