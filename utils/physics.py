@@ -259,8 +259,7 @@ def jump(ball, terrain, objects):
         ball.a_h = f_h(v_h_0[0])/ball.m
         ball.a_v = f_h(v_v_0[0])/ball.m
         # ball.x += (v_h_0[0] + ball.a_h * 1/2 * (t1-t0)**2) / 500
-        ball.y -= (v_v_0[0] + ball.a_v * 1/2 * (t1-t0)**2) / 500\
-        # print(ball.y)
+        ball.y -= (v_v_0[0] + ball.a_v * 1/2 * (t1-t0)**2) / 500
         for o in objects:
             if not isinstance(o, Ball):
                 o.get_position_jump(ball)
@@ -410,7 +409,7 @@ def collision_reaction_polygon(ball, edge, number_of_edges, object_list, terrain
     """
     # print(ball.v_h)
     # ako je sa lijeve strane odbija u lijevo
-    if edge < number_of_edges//4:
+    if edge <= number_of_edges//4:
         if ball.v_h <= 1:
             ball.v_h = 1
         ball.v_h = 0 - ball.v_h

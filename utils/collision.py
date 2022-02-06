@@ -442,7 +442,7 @@ def resolve_collisions(collision_list, object_list, terrain):
             # print(side_number)
 
             # nad leom (object1) treba napraviti odbijanje
-            collision_reaction_polygon(object1, side_number-1, object2.number_of_sides, object_list, terrain)
+            collision_reaction_polygon(object1, side_number-2, object2.number_of_sides, object_list, terrain)
         elif isinstance(object2, Ball) and isinstance(object1, Obstacle):
             terrain_vector = Vector(terrain[1][0], terrain[1][1]) - Vector(terrain[0][0], terrain[0][1])
             most_left_point = object2.furthest_point(terrain_vector)
@@ -453,6 +453,6 @@ def resolve_collisions(collision_list, object_list, terrain):
             # print(side_number)
 
             # nad leom (object2) treba napraviti odbijanje
-            collision_reaction_polygon(object2, side_number-1, object1.number_of_sides, object_list, terrain)
+            collision_reaction_polygon(object2, side_number-2, object1.number_of_sides, object_list, terrain)
 
     return True

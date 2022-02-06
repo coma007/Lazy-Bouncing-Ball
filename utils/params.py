@@ -10,6 +10,7 @@ v_up = 900
 angle_up = 1/2 * np.pi
 
 ball_mass = 1
+bullet_mass = 1
 
 
 def print_params():
@@ -20,6 +21,7 @@ def print_params():
     print(f"4. Acceleration on right key = {a_cmd}")
     print(f"5. Acceleration on left key = {a_cmd_down}")
     print(f"6. Ball mass = {ball_mass}")
+    print(f"7. Linear bullet mass = {bullet_mass}")
 
 
 def ask_for_params():
@@ -61,6 +63,11 @@ def ask_for_params():
                 if 1 > inp or 10 < inp:
                     raise Exception
                 ball_mass = inp
+            elif num == 7:
+                inp = float(input("\nMass of bullet [from 1 to 10]: "))
+                if 1 > inp or 10 < inp:
+                    raise Exception
+                bullet_mass = inp
             else:
                 raise Exception
         except Exception:

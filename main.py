@@ -13,6 +13,8 @@ if __name__ == '__main__':
     sky_color = (135, 206, 235)
     ground_color = (212, 123, 74)
 
+    # p.ask_for_params()
+
     pygame.init()
     pygame.display.set_caption("Game")
     surface = pygame.display.set_mode((1000, 600))
@@ -20,7 +22,7 @@ if __name__ == '__main__':
 
     clock = pygame.time.Clock()
 
-    leo = Ball()
+    leo = Ball(mass=p.ball_mass)
     objects = [leo]
     number_of_objects = 0
     spawn_rate = 0.02
@@ -50,7 +52,7 @@ if __name__ == '__main__':
                 objects.append(Bomb(1100))
                 number_of_objects += 1
             elif i == 1:
-                objects.append(LinearBullet(1200))
+                objects.append(LinearBullet(mass=p.bullet_mass, x=1200))
                 number_of_objects +=1
             else:
                 j = random.randint(0, 2)

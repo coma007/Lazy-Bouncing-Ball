@@ -8,7 +8,7 @@ class LinearBullet(object):
     Klasa LinearBullet koja modeluje metke.
     """
 
-    def __init__(self, x, length=10, mass=1, color=(0, 0, 0)):
+    def __init__(self, x, length=10, mass=p.bullet_mass, color=(0, 0, 0)):
         """
         Konstruktor klase LinearBullet.
 
