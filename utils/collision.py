@@ -234,7 +234,8 @@ def epa(simplex, object1, object2):
             add_vertex(simplex, min_index, support_v)
             min_dist = np.Inf
 
-    return min_norm * min_dist
+    # return min_norm * min_dist
+    return min_norm
 
 
 def check_for_collisions(object_list):
@@ -280,11 +281,12 @@ def check_for_collisions(object_list):
     return collisions
 
 
-def resolve_collisions(collision_list, object_list):
+def resolve_collisions(collision_list, object_list, terrain):
     for collision in collision_list:
         object1 = collision[0].shape
         object2 = collision[1].shape
         vector = collision[2]
+
 
         if isinstance(object1, (LinearBullet, Bomb)) and isinstance(object2, Ball):
             # return True
@@ -297,14 +299,30 @@ def resolve_collisions(collision_list, object_list):
         elif isinstance(object2, (Bomb, LinearBullet)) and isinstance(object1, Obstacle):
             object_list.remove(object2)
         elif isinstance(object1, Ball) and isinstance(object2, Obstacle):
+            terrain_vector = Vector(terrain[1][0], terrain[1][1]) - Vector(terrain[0][0], terrain[0][1])
+            most_left_point = object2.furthest_point(terrain_vector)
+            terrain_vector = most_left_point - object2.center
+            angle = np.arccos(dot(terrain_vector, vector)/(magnitude(terrain_vector)*magnitude(vector)))
+
+            side_number = angle//(2*np.pi/object2.number_of_sides)
+            # print(side_number)
+
             # nad leom (object1) treba napraviti odbijanje
-            object1.v_h = 0 - object1.v_h
+            # object1.v_h = 0 - object1.v_h
             # object1.stop()
             # object1.moving = False
             pass
         elif isinstance(object2, Ball) and isinstance(object1, Obstacle):
+            terrain_vector = Vector(terrain[1][0], terrain[1][1]) - Vector(terrain[0][0], terrain[0][1])
+            most_left_point = object2.furthest_point(terrain_vector)
+            terrain_vector = most_left_point - object2.center
+            angle = np.arccos(dot(terrain_vector, vector)/(magnitude(terrain_vector)*magnitude(vector)))
+
+            side_number = 1 + angle//(2*np.pi/object1.number_of_sides)
+            # print(side_number)
+
             # nad leom (object2) treba napraviti odbijanje
-            object2.v_h = 0 - object2.v_h
+            # object2.v_h = 0 - object2.v_h
             # object2.stop()
             # object2.moving = False
             pass

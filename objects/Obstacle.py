@@ -5,7 +5,7 @@ from objects.Vector import Vector, dot
 
 # hexagon
 class Obstacle(object):
-    def __init__(self, x, number_of_sides=6, diameter=30, mass=1, color=(212, 123, 74)):
+    def __init__(self, x, number_of_sides=6, diameter=40, mass=1, color=(212, 123, 74)):
         self._r = diameter
         self._m = mass
         self._v_h = 0  # horizontal velocity
@@ -14,7 +14,7 @@ class Obstacle(object):
         self._a_v = 0  # vertical acceleration
         self._color = color
         self._x = x  # x coordinate of position
-        self._y = 400  # y coordinate of position
+        self._y = 410  # y coordinate of position
         self._number_of_sides = number_of_sides
 
     @property
