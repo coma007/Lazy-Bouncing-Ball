@@ -39,7 +39,7 @@ if __name__ == '__main__':
     objects.append(Bomb(700))
     #
     # j = random.randint(3, 11)
-    objects.append(Obstacle(1000, 6))
+    objects.append(Obstacle(1000, 4))
     #
     # objects.append(LinearBullet(1000))
     while run:
@@ -55,8 +55,11 @@ if __name__ == '__main__':
                 objects.append(LinearBullet(1200))
                 number_of_objects +=1
             else:
-                j = random.randint(3, 11)
-                objects.append(Obstacle(1400, j))
+                j = random.randint(0,2)
+                if j == 0:
+                    objects.append(Obstacle(1400, 4))
+                elif j == 1:
+                    objects.append(Obstacle(1400, 6))
                 number_of_objects += 1
 
         clock.tick(np.abs(leo.v[0])+10)
@@ -203,7 +206,7 @@ if __name__ == '__main__':
         collisions = check_for_collisions(objects)
 
         # print(collisions)
-        run = resolve_collisions(collisions, objects)
+        run = resolve_collisions(collisions, objects, terrain)
 
         pygame.draw.circle(surface, leo.color, leo.coor, leo.r)
 
