@@ -298,9 +298,15 @@ def resolve_collisions(collision_list, object_list):
             object_list.remove(object2)
         elif isinstance(object1, Ball) and isinstance(object2, Obstacle):
             # nad leom (object1) treba napraviti odbijanje
+            object1.v_h = 0 - object1.v_h
+            # object1.stop()
+            # object1.moving = False
             pass
         elif isinstance(object2, Ball) and isinstance(object1, Obstacle):
             # nad leom (object2) treba napraviti odbijanje
+            object2.v_h = 0 - object2.v_h
+            # object2.stop()
+            # object2.moving = False
             pass
     return True
 

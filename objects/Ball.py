@@ -17,6 +17,7 @@ class Ball(object):
         self._y = 0     # y coordinate of position
         self._v_h_max = 10
         self._jumping = False
+        self._moving = True
 
     @property
     def m(self):
@@ -115,6 +116,14 @@ class Ball(object):
         return p.g * self._m
 
     @property
+    def moving(self):
+        return self._moving
+
+    @moving.setter
+    def moving(self, can_i_move):
+        self._moving = can_i_move
+
+    @property
     def jumping(self):
         return self._jumping
 
@@ -153,3 +162,6 @@ class Ball(object):
     @y.setter
     def y(self, value):
         self._y = value
+
+    def stop(self):
+        self._v_h = 0

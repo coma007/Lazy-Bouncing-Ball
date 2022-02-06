@@ -5,7 +5,8 @@ from objects.Ball import Ball
 
 
 def speed_up_ball_ground(ball, objects):
-
+    if not ball.moving:
+        return
     velocity, angle = ball.v
 
     # data sila
