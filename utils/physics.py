@@ -321,46 +321,22 @@ def collision_reaction_bullet(ball, bullet):
 
     # impoulse
     p = ball.m * ball.v_h - bullet.m * bullet.v_h
-    print(p)
     ball.v_h = p / ball.m
 
 
-def collision_reaction_polygon(ball, edge, number_of_edges):
+def collision_reaction_polygon(ball, edge, number_of_edges, object_list, terrain):
 
-
-    if ball.v_h == 0:
-        return
+    print(ball.v_h)
+    # ako je sa lijeve strane odbija u lijevo
+    if edge < number_of_edges//4:
+        if ball.v_h <= 1:
+            ball.v_h = 1
+        ball.v_h = 0 - ball.v_h
     else:
-        velocity, angle = ball.v
-
-        # otpor vazduha
-        f_air = lambda v: ball.m * p.r_air * v
-        f_air_h = lambda v: f_air(v) * np.cos(angle)
-        f_air_v = lambda v: f_air(v) * np.sin(angle)
-
-        # vertikalne sile
-        f_v = lambda v: - f_air_v(v) + ball.Q
-
-        # sila trenja
-        f_fr = lambda v: p.c_fr * f_v(v)
-
-        # horizontalne sile
-        f_h = lambda v: - f_air_h(v) - f_fr(v)
-
-        # moment sile
-        M = lambda v: f_h(v) * ball.r
-
-        # pocetna ugaona brzina i ubrzanje
-        w_0 = ball.v[0] / ball.r
-        alpha_0 = ball.a[0] / ball.r
-        omega_0 = np.array([w_0])
-
-        # ovo je zakucano
-        t0 = 0
-        t1 = 1
-        h = 2
-
-        dw = lambda *args: M(args[0]) / ball.I
-        w = nans_lib.rk4N(t0, t1, h, omega_0, dw)[0]
-        ball.v_h = w[1]*ball.r
-        ball.a_h = dw(w[1])/(t1-t0)
+        if ball.v_h <= 1:
+            ball.v_h = 1
+    # ako skace nek se odbije u skoku
+    if ball.jumping:
+        ball.v_v = 0 - ball.v_v
+        jump(ball, terrain, object_list)
+    print(ball.v_h)

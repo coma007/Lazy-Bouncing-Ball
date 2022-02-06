@@ -39,7 +39,7 @@ if __name__ == '__main__':
     objects.append(Bomb(700))
     #
     # j = random.randint(3, 11)
-    objects.append(Obstacle(1000, 4))
+    objects.append(Obstacle(1000, 10))
     #
     # objects.append(LinearBullet(1000))
     while run:
@@ -57,7 +57,7 @@ if __name__ == '__main__':
             else:
                 j = random.randint(0,2)
                 if j == 0:
-                    objects.append(Obstacle(1400, 4))
+                    objects.append(Obstacle(1400, 10))
                 elif j == 1:
                     objects.append(Obstacle(1400, 6))
                 number_of_objects += 1
