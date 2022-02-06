@@ -12,7 +12,13 @@ from objects.Ball import Ball
 
 ORIGIN = Vector(0, 0)
 
+
 def sort_intervals(interval_list):
+    """
+    Funkcija sortira intervale svakog objekta.
+    :param interval_list: Lista intervala.
+    :type interval_list: list[objects.AxisAlignedBoundingBox.Interval]
+    """
     j = 0
     while j != len(interval_list) - 1:
         for i in range(len(interval_list) - 1 - j):
@@ -26,6 +32,13 @@ def sort_intervals(interval_list):
 # objekta, nego samo izmedju nekih
 # svaki aabb projektujemo na x osu, ako se intervali nekih aabb-a seku i oni se potencijalno seku
 def sweep_and_prune(aabb_list):
+    """
+    Funkcija na osnovu liste Axis-aligned bounding boxa odredjuje potencijalne sudare.
+    :param aabb_list: Lista Axis-aligned bounding box-ova.
+    :type aabb_list: list[objects.AxisAlignedBoundingBox.AxisAlignedBoundingBox]
+    :return: Lista potencijalnih sudara.
+    :rtype: list[list[objects.AxisAlignedBoundingBox.AxisAlignedBoundingBox, objects.AxisAlignedBoundingBox.AxisAlignedBoundingBox]]
+    """
     intervals = []
     intervals_start = []
     intervals_end = []
@@ -63,6 +76,15 @@ def sweep_and_prune(aabb_list):
 
 
 def ball_to_line_collision(line, ball):
+    """
+    Funkcija za proveravanje sudara kruga i duzi.
+    :param line: Duz.
+    :type line: objects.LinearBullet.LinearBullet
+    :param ball: Krug.
+    :type ball: objects.Ball.Ball
+    :return: Podatak da li je doslo do sudara i vektor intenziteta sudara.
+    :rtype: bool, object.Vector
+    """
     A = line.get_min_coordinates()
     D = line.get_max_coordinates()
     C = ball.center
@@ -90,7 +112,17 @@ def ball_to_line_collision(line, ball):
         return statement, db_normalized_vector * db_magnitude
     return False, -1
 
+
 def ball_to_ball_collision(ball1, ball2):
+    """
+    Funkcija za proveravanje sudara dva kruga.
+    :param ball1: Krug 1.
+    :type ball1: objects.Ball.Ball or objects.Bomb.Bomb
+    :param ball2: Krug 2.
+    :type ball2: objects.Ball.Ball or objects.Bomb.Bomb
+    :return: Podatak da li je doslo do sudara i vektor intenziteta sudara.
+    :rtype: bool, object.Vector
+    """
     C1 = ball1.center
     C2 = ball2.center
     support_v = C2 - C1
@@ -101,6 +133,17 @@ def ball_to_ball_collision(ball1, ball2):
 
 
 def support_function(vector, object1, object2):
+    """
+    Support funkcija za odredjivanje tacke na Minkowski razlici.
+    :param vector: Vektor pravca za odredjivanje support tacke na objektima.
+    :type vector: objects.Vector
+    :param object1: Objekat 1.
+    :type object1: objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle
+    :param object2: Objekat 2.
+    :type object2: objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle
+    :return: Tacku na Minkowski razlici za zadati vektor.
+    :rtype: object.Vector
+    """
     # za sve vrste objekata moramo implementirati funkciju furthest_point(vector) koja ce nam vracati tacku koja je
     # najudaljenija tacka tog tela u odnosu na taj vector
     a = object1.furthest_point(vector)
@@ -109,6 +152,15 @@ def support_function(vector, object1, object2):
 
 
 def line_case(simplex, vector):
+    """
+    Funkcija koja dodaje trecu tacku na simplex Minkowski razlike.
+    :param simplex: Lista koja sadrzi tacke koje se vec nalaze na simpleksu.
+    :type simplex: list[objects.Vector.Vector]
+    :param vector: Vektor pravca.
+    :type vector: objects.Vector.Vector
+    :return: Informaciju da li se tacka (0,0) nalazi unutar simpleksa.
+    :rtype: bool
+    """
     b, a = simplex[0], simplex[1]
     ab, ao = b - a, ORIGIN - a
     if np.linalg.norm(ab.to_np_array()) == 0:
@@ -128,6 +180,15 @@ def line_case(simplex, vector):
 
 
 def triangle_case(simplex, vector):
+    """
+    Funkcija zamenjuje jednu tacku na simplexu sa novom.
+    :param simplex: Lista koja sadrzi tacke koje se vec nalaze na simpleksu.
+    :type simplex: list[objects.Vector.Vector]
+    :param vector: Vektor pravca.
+    :type vector: objects.Vector.Vector
+    :return: Informaciju da li se tacka (0,0) nalazi unutar simpleksa.
+    :rtype: bool
+    """
     c, b, a = simplex[0], simplex[1], simplex[2]
     ab, ac, ao = b - a, c - a, ORIGIN - a
 
@@ -155,12 +216,34 @@ def triangle_case(simplex, vector):
 
 
 def handle_simplex(simplex, vector):
+    """
+    Funkcija na osnovu duzine liste simpleksa odredjuje da li ce se pozvati line_case ili trianle_case funkcija.
+    :param vector: Vektor pravca za odredjivanje support tacke na objektima.
+    :param simplex: Lista koja sadrzi tacke koje se vec nalaze na simpleksu.
+    :type simplex: list[objects.Vector.Vector]
+    :param vector: Vektor pravca.
+    :type vector: objects.Vector.Vector
+    :return: Informaciju da li se tacka (0,0) nalazi unutar simpleksa.
+    :rtype: bool
+    """
     if len(simplex) == 2:
         return line_case(simplex, vector)
     return triangle_case(simplex, vector)
 
 
 def gjk(object1, object2, side):
+    """
+    Gilbert–Johnson–Keerthi algoritam za detekciju kolizija.
+    :param object1: Objekat 1.
+    :type object1: objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle
+    :param object2: Objekat 2.
+    :type object2: objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle
+    :param side: Podatak sa koje strane se desava potencijalni sudar
+     (moguce vreddnosti: 0 - sa leve strane; 1 - sa desne).
+    :type side: int
+    :return: Podatak da li je doslo do sudara i vektor intenziteta sudara.
+    :rtype: bool, objects.Vector
+    """
     # moramo imati centar svih vrsta tela koje definisemo!!
     support_v = object2.center - object1.center
     d = support_v.to_np_array() / np.linalg.norm(support_v.to_np_array())
@@ -188,6 +271,15 @@ def gjk(object1, object2, side):
 
 
 def add_vertex(simplex, min_index, vector):
+    """
+    Funkcija dodaje tacku u simpleks.
+    :param simplex: Lista tacaka simpleksa.
+    :type simplex: list[objects.Vector.Vector]
+    :param min_index: Mesto u listi za novu tacku.
+    :type min_index: int
+    :param vector: Vektor pravca.
+    :type vector: objects.Vector.Vector
+    """
     if min_index + 1 == len(simplex):
         simplex.append(vector)
         return
@@ -199,6 +291,17 @@ def add_vertex(simplex, min_index, vector):
 
 
 def epa(simplex, object1, object2):
+    """
+    Expanding polytope algoritam.
+    :param simplex: Lista tacaka simpleksa.
+    :type simplex: list[objects.Vector.Vector]
+    :param object1: Objekat 1.
+    :type object1: objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle
+    :param object2: Objekat 2.
+    :type object2: objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle
+    :return: Vektor intenziteta sudara.
+    :rtype: object.Vector.Vector
+    """
     min_dist = np.Inf
     min_index = 0
     min_norm = None
@@ -235,11 +338,17 @@ def epa(simplex, object1, object2):
             add_vertex(simplex, min_index, support_v)
             min_dist = np.Inf
 
-    # return min_norm * min_dist
     return min_norm
 
 
 def check_for_collisions(object_list):
+    """
+    Funkcija za detekciju kolizija.
+    :param object_list: Lista svih objekata.
+    :type object_list: list[objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle]
+    :return: Lista kolizija.
+    :rtype: list[list[objects.AxisAlignedBoundingBox.AxisAlignedBoundingBox, objects.AxisAlignedBoundingBox.AxisAlignedBoundingBox, objects.Vector.Vector]]
+    """
     aabb_list = []
     collisions = []
     for shape in object_list:
@@ -283,6 +392,17 @@ def check_for_collisions(object_list):
 
 
 def resolve_collisions(collision_list, object_list, terrain):
+    """
+    Funkcija za reakciju na kolizije.
+    :param collision_list: Lista kolizija.
+    :type collision_list: list[list[objects.AxisAlignedBoundingBox.AxisAlignedBoundingBox, objects.AxisAlignedBoundingBox.AxisAlignedBoundingBox, objects.Vector.Vector]]
+    :param object_list: Lista objekata.
+    :type object_list: list[objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle]
+    :param terrain: Podloga.
+    :type terrain: list[tuple]
+    :return: Informacija da li je doslo do kraja igre.
+    :rtype: bool
+    """
     for collision in collision_list:
         object1 = collision[0].shape
         object2 = collision[1].shape
@@ -303,9 +423,15 @@ def resolve_collisions(collision_list, object_list, terrain):
             collision_reaction_bullet(object1, object2)
             object_list.remove(object2)
         elif isinstance(object1, (Bomb, LinearBullet)) and isinstance(object2, Obstacle):
-            object_list.remove(object1)
+            try:
+                object_list.remove(object1)
+            except ValueError:
+                pass
         elif isinstance(object2, (Bomb, LinearBullet)) and isinstance(object1, Obstacle):
-            object_list.remove(object2)
+            try:
+                object_list.remove(object2)
+            except ValueError:
+                pass
         elif isinstance(object1, Ball) and isinstance(object2, Obstacle):
             terrain_vector = Vector(terrain[1][0], terrain[1][1]) - Vector(terrain[0][0], terrain[0][1])
             most_left_point = object2.furthest_point(terrain_vector)
@@ -330,39 +456,3 @@ def resolve_collisions(collision_list, object_list, terrain):
             collision_reaction_polygon(object2, side_number-1, object1.number_of_sides, object_list, terrain)
 
     return True
-
-import random
-
-if __name__ == '__main__':
-    aabb_list = []
-    # for i in range(5):
-    #     x1 = random.randint(0, 20)
-    #     y1 = random.randint(0, 20)
-    #     ball = Ball(diameter=random.randint(1, 7))
-    #     ball.x = x1
-    #     ball.y = y1
-    #     aabb_list.append(AxisAlignedBoundingBox(ball))
-
-    # b1 = Ball(diameter=3)
-    # b1.x = 1
-    # b1.y = 11
-    # aabb_list.append(AxisAlignedBoundingBox(b1))
-    #
-    o = Obstacle(600)
-    b = Ball(diameter=40)
-    b.x = 566.8228680324999
-    b.y = 390
-    aabb_list.append(AxisAlignedBoundingBox(b))
-    # print(gjk(b, o))
-    # print(ball_to_ball_collision(b, b1))
-    # simplex = [Vector(-1,-2), Vector(5,-2), Vector(1,4)]
-    # epa(simplex, b, b1)
-    # possible_collisions = sweep_and_prune(aabb_list)
-    # print(dot(Vector(1, 2), ORIGIN))
-    # print(dot(Vector(2, 5), ORIGIN))
-    # for possible_collision in possible_collisions:
-    #     if possible_collision[0].overlap_check(possible_collision[1]):
-    #         for aabb in possible_collision:
-    #             print(aabb.shape.r)
-    #             print(aabb.shape.center)
-    #         print(ball_to_ball_collision(possible_collision[0].shape, possible_collision[1].shape))

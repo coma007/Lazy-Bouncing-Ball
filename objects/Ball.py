@@ -4,8 +4,21 @@ from objects.Vector import Vector
 
 
 class Ball(object):
+    """
+    Klasa Ball koja modeluje Lea.
+    """
 
     def __init__(self, diameter=20, mass=p.ball_mass, color=(27, 3, 163)):
+        """
+        Konstruktor klase Ball.
+
+        :param diameter: polurecnik
+        :type diameter: float
+        :param mass: masa
+        :type mass: float
+        :param color: boja
+        :type color: tuple
+        """
         self._r = diameter
         self._m = mass
         self._v_h = 0   # horizontal velocity
@@ -144,6 +157,7 @@ class Ball(object):
                 self._y = y - self._r
                 break
 
+
     # funkcije potrebne za detekciju kolizija
 
     # tacke sa najvecim i najmanjim koordinatama za sudare
@@ -161,11 +175,3 @@ class Ball(object):
     @property
     def center(self):
         return Vector(self._x, self._y)
-
-    # samo funkcija za testiranje, posle je obrisati
-    @y.setter
-    def y(self, value):
-        self._y = value
-
-    def stop(self):
-        self._v_h = 0

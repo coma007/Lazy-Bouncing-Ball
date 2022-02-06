@@ -2,7 +2,19 @@
 class Interval(object):
     # ako je axis 0 - x osa
     # ako je axis 1 - y osa
+    """
+    Klasa Interval koja modeluje interval jednog Axis-aligned bounding box-a.
+    """
+
     def __init__(self, aabb, axis=0):
+        """
+        Konstruktor klase Interval.
+
+        :param aabb: polurecnik
+        :type aabb: objects.AxisAlignedBoundingBox.AxisAlignedBoundingBox
+        :param axis: Osa(0 - x osa; 1 - y osa)
+        :type axis: int
+        """
         if axis == 0:
             self.start = aabb.min_point.x
             self.end = aabb.max_point.x
@@ -23,7 +35,19 @@ class Interval(object):
 
 
 class Point(object):
+    """
+    Klasa Point koja modeluje tacku.
+    """
+
     def __init__(self, x, y):
+        """
+        Konstruktor klase Point.
+
+        :param x: x koordinata
+        :type x: float
+        :param y: y koordinata
+        :type y: float
+        """
         self._x = x
         self._y = y
 
@@ -51,10 +75,18 @@ class Point(object):
 
 
 class AxisAlignedBoundingBox(object):
-    def __init__(self, shape):
-        self._shape = shape
+    """
+    Klasa AxisAlignedBoundingBox koja modeluje Axis-aligned bounding box.
+    """
 
-        # svaki objekat mora imati funkcije koje vracaju minimalnu i maksimalnu tacku tog objekta
+    def __init__(self, shape):
+        """
+        Konstruktor klase AxisAlignedBoundingBox.
+
+        :param shape: Objekat vezan za  Axis-aligned bounding box
+        :type shape: objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle
+        """
+        self._shape = shape
         min_coordinates = shape.get_min_coordinates()
         self._min_point = Point(min_coordinates[0], min_coordinates[1])
         max_coordinates = shape.get_max_coordinates()

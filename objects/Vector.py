@@ -2,7 +2,21 @@ import numpy as np
 
 
 class Vector(object):
+    """
+    Klasa Vector koja modeluje vektor.
+    """
+
     def __init__(self, x, y, z=0):
+        """
+        Konstruktor klase Vector.
+
+        :param x: x koordinata
+        :type x: float
+        :param y: y koordinata
+        :type y: float
+        :param z: z koordinata
+        :type z: float
+        """
         if np.isnan(x):
             x = 0
         if np.isnan(y):
@@ -68,10 +82,30 @@ class Vector(object):
 
 
 def dot(vector1, vector2):
+    """
+    Funkcija za skalarni proizvod.
+    :param vector1: Vektor 1.
+    :type vector1: objects.Vector.Vector
+    :param vector2: Vektor 2.
+    :type vector2: objects.Vector.Vector
+    :return: Skalarni proizvod dva vektora.
+    :rtype: float
+    """
     return vector1.x * vector2.x + vector1.y * vector2.y + vector1.z * vector2.z
 
 
 def triple_product(vector1, vector2, vector3):
+    """
+    Funkcija za trostruki vektorski proizvod.
+    :param vector1: Vektor 1.
+    :type vector1: objects.Vector.Vector
+    :param vector2: Vektor 2.
+    :type vector2: objects.Vector.Vector
+    :param vector3: Vektor 3.
+    :type vector3: objects.Vector.Vector
+    :return: Trostruki vektorski proizvod tri vektora.
+    :rtype: objects.Vector.Vector
+    """
     vector1_array = vector1.to_np_array()
     vector2_array = vector2.to_np_array()
     vector3_array = vector3.to_np_array()
@@ -82,11 +116,11 @@ def triple_product(vector1, vector2, vector3):
 
 
 def magnitude(vector):
+    """
+    Funkcija za intenzitet vektora.
+    :param vector1: Vektor 1.
+    :type vector1: objects.Vector.Vector
+    :return: Intenzitet vektora.
+    :rtype: float
+    """
     return np.sqrt(vector.x**2 + vector.y**2)
-
-
-if __name__ == '__main__':
-    vector1 = Vector(1, 2)
-    vector2 = Vector(2, 7)
-    vector3 = triple_product(vector1, vector2, vector1)
-    print(vector3)

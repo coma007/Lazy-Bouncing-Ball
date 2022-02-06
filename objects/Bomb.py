@@ -5,7 +5,23 @@ from objects.Vector import Vector
 
 
 class Bomb(object):
+    """
+    Klasa Bomb koja modeluje bombu.
+    """
+
     def __init__(self, x, diameter=10, mass=2, color=(0, 0, 0)):
+        """
+        Konstruktor klase Bomb.
+
+        :param x: x koordinata centra bombe
+        :type x: float
+        :param diameter: polurecnik
+        :type diameter: float
+        :param mass: masa
+        :type mass: float
+        :param color: boja
+        :type color: tuple
+        """
         self._r = diameter
         self._m = mass
         self._v_h = 30   # horizontal velocity

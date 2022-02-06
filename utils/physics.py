@@ -5,6 +5,13 @@ from objects.Ball import Ball
 
 
 def speed_up_ball_ground(ball, objects):
+    """
+    Funkcija za ubrzavanje lopte na tlu.
+    :param ball: Lopta.
+    :type ball: objects.Ball.Ball
+    :param objects: Lista objekata.
+    :type objects: list[objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle]
+    """
     if not ball.moving:
         return
     velocity, angle = ball.v
@@ -48,6 +55,13 @@ def speed_up_ball_ground(ball, objects):
 
 
 def speed_up_ball(ball, objects):
+    """
+    Funkcija za ubrzavanje lopte.
+    :param ball: Lopta.
+    :type ball: objects.Ball.Ball
+    :param objects: Lista objekata.
+    :type objects: list[objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle]
+    """
 
     velocity, angle = ball.v
 
@@ -92,6 +106,14 @@ def speed_up_ball(ball, objects):
 
 
 def slow_down_ball_ground(ball, objects):
+    """
+    Funkcija za usporavanje lopte na tlu.
+    :param ball: Lopta.
+    :type ball: objects.Ball.Ball
+    :param objects: Lista objekata.
+    :type objects: list[objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle]
+    """
+
     if ball.v_h == 0:
         return
     velocity, angle = ball.v
@@ -141,6 +163,14 @@ def slow_down_ball_ground(ball, objects):
 
 
 def slow_down_ball(ball, objects):
+    """
+    Funkcija za usporavanje lopte.
+    :param ball: Lopta.
+    :type ball: objects.Ball.Ball
+    :param objects: Lista objekata.
+    :type objects: list[objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle]
+    """
+
     if ball.v_h == 0:
         return
     velocity, angle = ball.v
@@ -186,6 +216,16 @@ def slow_down_ball(ball, objects):
 
 
 def jump(ball, terrain, objects):
+    """
+    Funkcija za skok lopte.
+    :param ball: Lopta.
+    :type ball: objects.Ball.Ball
+    :param terrain: Podloga.
+    :type terrain: list[tuple]
+    :param objects: Lista objekata.
+    :type objects: list[objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle]
+    """
+
     velocity, angle = ball.v
 
     # otpor vazduha
@@ -229,6 +269,15 @@ def jump(ball, terrain, objects):
 
 
 def fall_down(ball, terrain, objects):
+    """
+    Funkcija za pad lopte.
+    :param ball: Lopta.
+    :type ball: objects.Ball.Ball
+    :param terrain: Podloga.
+    :type terrain: list[tuple]
+    :param objects: Lista objekata.
+    :type objects: list[objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle]
+    """
     velocity, angle = ball.v
     angle *= -1
 
@@ -277,9 +326,20 @@ def fall_down(ball, terrain, objects):
         ball.jumping = False
 
 
-def inertion(ball):
+def inertion(ball, objects):
+    """
+    Funkcija za inerciju lopte.
+    :param ball: Lopta.
+    :type ball: objects.Ball.Ball
+    :param objects: Lista objekata.
+    :type objects: list[objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle]
+
+    """
 
     if ball.v_h == 0:
+        for o in objects:
+            if not isinstance(o, Ball):
+                o.get_position(ball)
         return
     else:
         velocity, angle = ball.v
@@ -315,9 +375,19 @@ def inertion(ball):
         w = nans_lib.rk4N(t0, t1, h, omega_0, dw)[0]
         ball.v_h = w[1]*ball.r
         ball.a_h = dw(w[1])/(t1-t0)
+        for o in objects:
+            if not isinstance(o, Ball):
+                o.get_position(ball)
 
 
 def collision_reaction_bullet(ball, bullet):
+    """
+    Funkcija za koliziju lopte sa metkom.
+    :param ball: Lopta.
+    :type ball: objects.Ball.Ball
+    :param bullet: Metak.
+    :type bullet: objects.LinearBullet.LinearBullet
+    """
 
     # impoulse
     p = ball.m * ball.v_h - bullet.m * bullet.v_h
@@ -325,8 +395,20 @@ def collision_reaction_bullet(ball, bullet):
 
 
 def collision_reaction_polygon(ball, edge, number_of_edges, object_list, terrain):
-
-    print(ball.v_h)
+    """
+    Funkcija za koliziju lopte sa preprekom.
+    :param ball: Lopta.
+    :type ball: objects.Ball.Ball
+    :param edge: Broj stranice.
+    :type edge: int
+    :param number_of_edges: Ukupan broj stranica.
+    :type number_of_edges: int
+    :param terrain: Podloga.
+    :type terrain: list[tuple]
+    :param objects: Lista objekata.
+    :type objects: list[objects.Ball.Ball or objects.Bomb.Bomb or objects.LinearBullet.LinearBullet or objects.Obstacle.Obstacle]
+    """
+    # print(ball.v_h)
     # ako je sa lijeve strane odbija u lijevo
     if edge < number_of_edges//4:
         if ball.v_h <= 1:
@@ -339,4 +421,4 @@ def collision_reaction_polygon(ball, edge, number_of_edges, object_list, terrain
     if ball.jumping:
         ball.v_v = 0 - ball.v_v
         jump(ball, terrain, object_list)
-    print(ball.v_h)
+    # print(ball.v_h)

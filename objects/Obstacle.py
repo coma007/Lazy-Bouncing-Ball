@@ -5,7 +5,25 @@ from objects.Vector import Vector, dot
 
 # hexagon
 class Obstacle(object):
+    """
+    Klasa Obstacle koja modeluje prepreke na podlozi.
+    """
+
     def __init__(self, x, number_of_sides=6, diameter=40, mass=1, color=(212, 123, 74)):
+        """
+        Konstruktor klase Obstacle.
+
+        :param x: x koordinata centra prepreke
+        :type x: float
+        :param number_of_sides: broj strana prepreke
+        :type number_of_sides: int
+        :param diameter: poluprecnik opisanog kruga
+        :type diameter: float
+        :param mass: masa
+        :type mass: float
+        :param color: boja
+        :type color: tuple
+        """
         self._r = diameter
         self._m = mass
         self._v_h = 0  # horizontal velocity

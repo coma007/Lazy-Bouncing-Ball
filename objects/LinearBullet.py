@@ -4,7 +4,23 @@ from objects.Vector import Vector, dot
 
 
 class LinearBullet(object):
+    """
+    Klasa LinearBullet koja modeluje metke.
+    """
+
     def __init__(self, x, length=10, mass=1, color=(0, 0, 0)):
+        """
+        Konstruktor klase LinearBullet.
+
+        :param x: x koordinata centra metka
+        :type x: float
+        :param length: duzina metka
+        :type length: float
+        :param mass: masa metka
+        :type mass: float
+        :param color: boja metka
+        :type color: tuple
+        """
         self._m = mass
         self._v_h = 10  # horizontal velocity
         self._v_v = 0  # vertical velocity
