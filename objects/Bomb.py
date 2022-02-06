@@ -8,7 +8,7 @@ class Bomb(object):
     def __init__(self, x, diameter=10, mass=2, color=(0, 0, 0)):
         self._r = diameter
         self._m = mass
-        self._v_h = 10   # horizontal velocity
+        self._v_h = 30   # horizontal velocity
         self._v_v = 0   # vertical velocity
         self._a_h = 0   # horizontal acceleration
         self._a_v = 0   # vertical acceleration

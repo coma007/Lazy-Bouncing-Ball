@@ -1,3 +1,2 @@
-*  povecati brzinu metaka malko
-*  provalija (neki plavi pravougaonik visine podloge)
+
 
